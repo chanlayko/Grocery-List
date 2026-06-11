@@ -13,6 +13,11 @@ final groceryBoxProvider = Provider<Box<GroceryItem>>((ref) {
   return Hive.box<GroceryItem>(kGroceryBoxName);
 });
 
+// Settings Box provider
+final settingsBoxProvider = Provider<Box>((ref) {
+  return Hive.box('settings_box');
+});
+
 // Repository provider
 final groceryRepositoryProvider = Provider<GroceryRepository>((ref) {
   final box = ref.watch(groceryBoxProvider);
@@ -35,12 +40,14 @@ class GroceryState {
   final String searchQuery;
   final GrocerySortOption sortOption;
   final bool isLoading;
+  final double totalBudget;
 
   GroceryState({
     required this.items,
     this.searchQuery = '',
     this.sortOption = GrocerySortOption.newestFirst,
     this.isLoading = false,
+    this.totalBudget = 15000.0,
   });
 
   GroceryState copyWith({
@@ -48,12 +55,14 @@ class GroceryState {
     String? searchQuery,
     GrocerySortOption? sortOption,
     bool? isLoading,
+    double? totalBudget,
   }) {
     return GroceryState(
       items: items ?? this.items,
       searchQuery: searchQuery ?? this.searchQuery,
       sortOption: sortOption ?? this.sortOption,
       isLoading: isLoading ?? this.isLoading,
+      totalBudget: totalBudget ?? this.totalBudget,
     );
   }
 }
@@ -61,9 +70,10 @@ class GroceryState {
 // StateNotifier for managing the list and state
 class GroceryNotifier extends StateNotifier<GroceryState> {
   final GroceryRepository _repository;
+  final Box _settingsBox;
   final _uuid = const Uuid();
 
-  GroceryNotifier(this._repository) : super(GroceryState(items: [])) {
+  GroceryNotifier(this._repository, this._settingsBox) : super(GroceryState(items: [])) {
     loadItems();
   }
 
@@ -71,7 +81,8 @@ class GroceryNotifier extends StateNotifier<GroceryState> {
     state = state.copyWith(isLoading: true);
     try {
       final items = await _repository.getItems();
-      state = state.copyWith(items: items, isLoading: false);
+      final double budget = _settingsBox.get('totalBudget', defaultValue: 15000.0) as double;
+      state = state.copyWith(items: items, totalBudget: budget, isLoading: false);
     } catch (_) {
       state = state.copyWith(isLoading: false);
     }
@@ -141,12 +152,18 @@ class GroceryNotifier extends StateNotifier<GroceryState> {
   void setSortOption(GrocerySortOption option) {
     state = state.copyWith(sortOption: option);
   }
+
+  Future<void> setTotalBudget(double budget) async {
+    await _settingsBox.put('totalBudget', budget);
+    state = state.copyWith(totalBudget: budget);
+  }
 }
 
 // Main provider definition
 final groceryProvider = StateNotifierProvider<GroceryNotifier, GroceryState>((ref) {
   final repository = ref.watch(groceryRepositoryProvider);
-  return GroceryNotifier(repository);
+  final settingsBox = ref.watch(settingsBoxProvider);
+  return GroceryNotifier(repository, settingsBox);
 });
 
 // Computed filtering Provider
@@ -203,6 +220,9 @@ class ExpenseMetrics {
   final int totalCount;
   final int purchasedCount;
   final int pendingCount;
+  final double totalBudget;
+  final double remainingBudget;
+  final double budgetSpentPercentage;
 
   ExpenseMetrics({
     required this.totalPlanned,
@@ -211,6 +231,9 @@ class ExpenseMetrics {
     required this.totalCount,
     required this.purchasedCount,
     required this.pendingCount,
+    required this.totalBudget,
+    required this.remainingBudget,
+    required this.budgetSpentPercentage,
   });
 }
 
@@ -236,6 +259,12 @@ final expenseMetricsProvider = Provider<ExpenseMetrics>((ref) {
     }
   }
 
+  final totalBudget = state.totalBudget;
+  final remainingBudget = totalBudget - totalPurchased;
+  final budgetSpentPercentage = totalBudget > 0
+      ? (totalPurchased / totalBudget) * 100
+      : 0.0;
+
   return ExpenseMetrics(
     totalPlanned: totalPlanned,
     totalPurchased: totalPurchased,
@@ -243,5 +272,8 @@ final expenseMetricsProvider = Provider<ExpenseMetrics>((ref) {
     totalCount: totalCount,
     purchasedCount: purchasedCount,
     pendingCount: pendingCount,
+    totalBudget: totalBudget,
+    remainingBudget: remainingBudget,
+    budgetSpentPercentage: budgetSpentPercentage,
   );
 });

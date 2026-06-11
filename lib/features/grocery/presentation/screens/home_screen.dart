@@ -7,8 +7,7 @@ import '../widgets/add_edit_item_dialog.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  void _showSortBottomSheet(
-      BuildContext context, WidgetRef ref, GrocerySortOption currentOption) {
+  void _showSortBottomSheet(BuildContext context, WidgetRef ref, GrocerySortOption currentOption) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -64,12 +63,9 @@ class HomeScreen extends ConsumerWidget {
                 return RadioListTile<GrocerySortOption>(
                   title: Row(
                     children: [
-                      Icon(icon,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary),
+                      Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 12),
-                      Text(label,
-                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                      Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
                     ],
                   ),
                   value: option,
@@ -106,18 +102,15 @@ class HomeScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     // Filter items into pending and purchased lists
-    final pendingItems =
-        filteredItems.where((item) => !item.isPurchased).toList();
-    final purchasedItems =
-        filteredItems.where((item) => item.isPurchased).toList();
+    final pendingItems = filteredItems.where((item) => !item.isPurchased).toList();
+    final purchasedItems = filteredItems.where((item) => item.isPurchased).toList();
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.shopping_cart_checkout_rounded,
-                color: theme.colorScheme.primary),
+            Icon(Icons.shopping_cart_checkout_rounded, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
             const Text(
               'Grocery & Expense Tracker',
@@ -142,7 +135,7 @@ class HomeScreen extends ConsumerWidget {
       body: Column(
         children: [
           // 1. TOP EXPENSE DASHBOARD CARD
-          _buildDashboard(context, metrics),
+          _buildDashboard(context, ref, metrics),
 
           // 2. SEARCH & SORT BAR
           Padding(
@@ -156,22 +149,20 @@ class HomeScreen extends ConsumerWidget {
                       hintText: 'e.g. Apples, Milk',
                       prefixIcon: const Icon(Icons.search_rounded),
                       filled: true,
-                      fillColor:
-                          theme.colorScheme.surfaceVariant.withOpacity(0.15),
+                      fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.15),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                            color: theme.colorScheme.outlineVariant
-                                .withOpacity(0.5)),
+                          color: theme.colorScheme.outlineVariant.withOpacity(0.5)
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                            color: theme.colorScheme.outlineVariant
-                                .withOpacity(0.3)),
+                          color: theme.colorScheme.outlineVariant.withOpacity(0.3)
+                        ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                     ),
                     onChanged: (text) {
                       ref.read(groceryProvider.notifier).setSearchQuery(text);
@@ -180,19 +171,19 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 InkWell(
-                  onTap: () =>
-                      _showSortBottomSheet(context, ref, state.sortOption),
+                  onTap: () => _showSortBottomSheet(context, ref, state.sortOption),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color:
-                                theme.colorScheme.primary.withOpacity(0.15))),
+                      color: theme.colorScheme.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.solid(
+                        color: theme.colorScheme.primary.withOpacity(0.15)
+                      )
+                    ),
                     child: Icon(
-                      Icons.tune_rounded,
+                      Icons.tune_rounded, 
                       color: theme.colorScheme.primary,
                     ),
                   ),
@@ -206,11 +197,9 @@ class HomeScreen extends ConsumerWidget {
             child: state.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : state.items.isEmpty
-                    ? _buildEmptyState(context,
-                        'No grocery items yet.\nTap the + button to add an item.')
+                    ? _buildEmptyState(context, 'No grocery items yet.\nTap the + button to add an item.')
                     : filteredItems.isEmpty
-                        ? _buildEmptyState(context,
-                            'No matching items\nfound for your search.')
+                        ? _buildEmptyState(context, 'No matching items\nfound for your search.')
                         : _buildSections(context, pendingItems, purchasedItems),
           ),
         ],
@@ -218,14 +207,14 @@ class HomeScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddDialog(context),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Add Item',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        label: const Text('Add Item', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
 
-  Widget _buildDashboard(BuildContext context, ExpenseMetrics metrics) {
+  Widget _buildDashboard(BuildContext context, WidgetRef ref, ExpenseMetrics metrics) {
     final theme = Theme.of(context);
+    final remainingBudgetColor = metrics.remainingBudget < 0 ? Colors.red : Colors.green;
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -259,8 +248,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(20),
@@ -275,6 +263,120 @@ class HomeScreen extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 16),
+
+          // INTERACTIVE BUDGET AREA
+          StatefulBuilder(
+            builder: (context, setState) {
+              final isDark = theme.brightness == Brightness.dark;
+              return Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.black26 : Colors.white24,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withOpacity(0.1),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Edit budget part
+                        _BudgetEditor(
+                          totalBudget: metrics.totalBudget,
+                          onSave: (newBudget) {
+                            ref.read(groceryProvider.notifier).setTotalBudget(newBudget);
+                          },
+                        ),
+                        // Remaining Budget part
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'REMAINING',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '¥${metrics.remainingBudget.toStringAsFixed(0)}',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.black,
+                                color: remainingBudgetColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Progress bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Budget Spent',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.8),
+                          ),
+                        ),
+                        Text(
+                          '${metrics.budgetSpentPercentage.toStringAsFixed(0)}%',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: remainingBudgetColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: (metrics.budgetSpentPercentage / 100).clamp(0.0, 1.0),
+                        backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          metrics.remainingBudget < 0 ? Colors.red : Colors.green,
+                        ),
+                        minHeight: 8,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Spent: ¥${metrics.totalPurchased.toStringAsFixed(0)}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 9,
+                            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                          ),
+                        ),
+                        Text(
+                          'Limit: ¥${metrics.totalBudget.toStringAsFixed(0)}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 9,
+                            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
           const SizedBox(height: 16),
           // Expenses Row
           Row(
@@ -314,17 +416,23 @@ class HomeScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSimpleCountChip(
-                  context,
-                  'Total: ${metrics.totalCount}',
-                  Icons.assignment_turned_in_outlined,
-                  theme.colorScheme.primary),
+                context, 
+                'Total: ${metrics.totalCount}', 
+                Icons.assignment_turned_in_outlined, 
+                theme.colorScheme.primary
+              ),
               _buildSimpleCountChip(
-                  context,
-                  'Purchased: ${metrics.purchasedCount}',
-                  Icons.check_outlined,
-                  Colors.green),
-              _buildSimpleCountChip(context, 'Pending: ${metrics.pendingCount}',
-                  Icons.timer_outlined, Colors.amber.shade800),
+                context, 
+                'Purchased: ${metrics.purchasedCount}', 
+                Icons.check_outlined, 
+                Colors.green
+              ),
+              _buildSimpleCountChip(
+                context, 
+                'Pending: ${metrics.pendingCount}', 
+                Icons.timer_outlined, 
+                Colors.amber.shade800
+              ),
             ],
           )
         ],
@@ -332,8 +440,13 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMetricTile(BuildContext context, String title, String amount,
-      IconData icon, Color amountColor) {
+  Widget _buildMetricTile(
+    BuildContext context, 
+    String title, 
+    String amount, 
+    IconData icon, 
+    Color amountColor
+  ) {
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -341,9 +454,7 @@ class HomeScreen extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon,
-                size: 14,
-                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6)),
+            Icon(icon, size: 14, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6)),
             const SizedBox(width: 4),
             Text(
               title,
@@ -367,8 +478,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSimpleCountChip(
-      BuildContext context, String text, IconData icon, Color color) {
+  Widget _buildSimpleCountChip(BuildContext context, String text, IconData icon, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -411,7 +521,10 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildSections(
-      BuildContext context, List<dynamic> pending, List<dynamic> purchased) {
+    BuildContext context, 
+    List<dynamic> pending, 
+    List<dynamic> purchased
+  ) {
     final theme = Theme.of(context);
     final countPending = pending.length;
     final countPurchased = purchased.length;
@@ -421,8 +534,7 @@ class HomeScreen extends ConsumerWidget {
       children: [
         // 1. PENDING SECTION
         if (countPending > 0) ...[
-          _buildSectionHeader(context, 'Pending Items ($countPending)',
-              Icons.hourglass_top, theme.colorScheme.primary),
+          _buildSectionHeader(context, 'Pending Items ($countPending)', Icons.hourglass_top, theme.colorScheme.primary),
           ...pending.map((item) => GroceryItemCard(item: item)),
         ],
 
@@ -431,16 +543,14 @@ class HomeScreen extends ConsumerWidget {
 
         // 2. PURCHASED SECTION
         if (countPurchased > 0) ...[
-          _buildSectionHeader(context, 'Purchased Items ($countPurchased)',
-              Icons.task_alt, Colors.green),
+          _buildSectionHeader(context, 'Purchased Items ($countPurchased)', Icons.task_alt, Colors.green),
           ...purchased.map((item) => GroceryItemCard(item: item)),
         ],
       ],
     );
   }
 
-  Widget _buildSectionHeader(
-      BuildContext context, String title, IconData icon, Color color) {
+  Widget _buildSectionHeader(BuildContext context, String title, IconData icon, Color color) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 8),
@@ -465,6 +575,147 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _BudgetEditor extends StatefulWidget {
+  final double totalBudget;
+  final ValueChanged<double> onSave;
+
+  const _BudgetEditor({
+    Key? key,
+    required this.totalBudget,
+    required this.onSave,
+  }) : super(key: key);
+
+  @override
+  State<_BudgetEditor> createState() => _BudgetEditorState();
+}
+
+class _BudgetEditorState extends State<_BudgetEditor> {
+  bool _isEditing = false;
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.totalBudget.toStringAsFixed(0));
+  }
+
+  @override
+  void didUpdateWidget(covariant _BudgetEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.totalBudget != widget.totalBudget && !_isEditing) {
+      _controller.text = widget.totalBudget.toStringAsFixed(0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final val = double.tryParse(_controller.text);
+    if (val != null && val >= 0) {
+      widget.onSave(val);
+    }
+    setState(() {
+      _isEditing = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    if (_isEditing) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '¥', 
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontFamily: 'JetBrains Mono',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 4),
+          SizedBox(
+            width: 80,
+            height: 36,
+            child: TextField(
+              controller: _controller,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontFamily: 'JetBrains Mono',
+                fontWeight: FontWeight.bold,
+              ),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+              onSubmitted: (_) => _submit(),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.check, size: 16, color: Colors.green),
+            onPressed: _submit,
+            constraints: const BoxConstraints(),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'TOTAL BUDGET',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(width: 4),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _controller.text = widget.totalBudget.toStringAsFixed(0);
+                  _isEditing = true;
+                });
+              },
+              borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Icon(
+                  Icons.edit_rounded,
+                  size: 11,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '¥${widget.totalBudget.toStringAsFixed(0)}',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.black,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -19,6 +19,9 @@ void main() async {
   // Open the primary Hive database box for grocery list persistence
   await Hive.openBox<GroceryItem>(kGroceryBoxName);
 
+  // Open settings box for budget persistence
+  await Hive.openBox('settings_box');
+
   // Run the application bounded by ProviderScope for Riverpod states
   runApp(
     const ProviderScope(
