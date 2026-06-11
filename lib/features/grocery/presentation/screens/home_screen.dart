@@ -178,7 +178,7 @@ class HomeScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.solid(
+                      border: Border.all(
                         color: theme.colorScheme.primary.withOpacity(0.15)
                       )
                     ),
@@ -308,7 +308,7 @@ class HomeScreen extends ConsumerWidget {
                             Text(
                               '¥${metrics.remainingBudget.toStringAsFixed(0)}',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.black,
+                                fontWeight: FontWeight.w900,
                                 color: remainingBudgetColor,
                               ),
                             ),
@@ -711,7 +711,7 @@ class _BudgetEditorState extends State<_BudgetEditor> {
         Text(
           '¥${widget.totalBudget.toStringAsFixed(0)}',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.black,
+            fontWeight: FontWeight.w900,
             color: theme.colorScheme.primary,
           ),
         ),

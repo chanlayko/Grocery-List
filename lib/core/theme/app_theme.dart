@@ -9,7 +9,7 @@ class AppTheme {
         brightness: Brightness.light,
         surface: const Color(0xFFF9FBFB),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 1,
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       ),
@@ -29,7 +29,7 @@ class AppTheme {
         brightness: Brightness.dark,
         surface: const Color(0xFF121818),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 1,
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       ),
