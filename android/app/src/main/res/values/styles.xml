@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme applied to the Android Window as soon as the process has started.
+         This theme accompanies the image defined in styles.xml. -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <!-- Show a splash image on the launching screen. -->
+        <item android:windowBackground="@drawable/launch_background"/>
+    </style>
+    <!-- Normal Theme applied after Flutter starts rendering its own frames. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item android:windowBackground="@android:color/white"/>
+    </style>
+</resources>

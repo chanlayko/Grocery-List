@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Grocery List \u0026 Expense Tracker",
+  "description": "A Flutter mobile app with Riverpod and Hive, complete with an interactive in-browser mobile web simulator.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
